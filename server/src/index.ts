@@ -2,10 +2,14 @@ import express from "express";
 import mongoose from "mongoose";
 import "dotenv/config";
 
+import router from "./routes/auth.routes.js";
+
 const app = express();
 app.use(express.json());
 const PORT = process.env.PORT ?? 5000;
 const MONGO_URI = process.env.MONGO_URI;
+
+app.use("/api/auth", router);
 
 async function start() {
   try {
