@@ -1,9 +1,10 @@
 services:
   mongo:
     image: mongo:7
-    ports: 
+    command: ["mongod", "--wiredTigerCacheSizeGB", "0.5"]
+    ports:
       - "27017:27017"
-    volumes: 
+    volumes:
       - mongo-data:/data/db
 
 volumes:
