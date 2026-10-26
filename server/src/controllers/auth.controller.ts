@@ -3,6 +3,8 @@ import z from "zod";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "./../models/User.js";
+import { UserRequestInterface } from "../interfaces/UserRequestInterface.js";
+
 export const registerSchema = z.object({
   name: z.string().min(2),
   email: z.email().toLowerCase(),
@@ -74,7 +76,7 @@ export const login = async (req: Request, res: Response) => {
       });
 
     const token = jwt.sign(
-      { id: user._id, role: user.role },
+      { id: user._id.toString(), role: user.role },
       process.env.JWT_SECRET!,
       {
         expiresIn: "1d",
@@ -100,4 +102,18 @@ export const login = async (req: Request, res: Response) => {
     console.error(error);
     return res.status(500).json({ message: "something went wrong" });
   }
+};
+
+export const me = (req: UserRequestInterface, res: Response) => {
+  return res.status(200).json({ user: req.user });
+};
+
+export const logout = (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  return res.status(200).json({ status: 200, message: "logged out" });
 };
